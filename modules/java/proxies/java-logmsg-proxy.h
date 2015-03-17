@@ -26,6 +26,7 @@
 #define JAVA_LOGMSG_PROXY_H_
 
 #include "LogMessage.h"
+#include "MyLogMessage.h"
 #include "logmsg.h"
 
 typedef struct _JavaLogMessageProxy JavaLogMessageProxy;

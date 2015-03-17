@@ -30,7 +30,8 @@ Java_org_syslog_1ng_InternalMessageSender_createInternalMessage(JNIEnv *env, jcl
   if ((pri != org_syslog_ng_InternalMessageSender_MsgDebug) || debug_flag)
     {
       const char *c_str = (*env)->GetStringUTFChars(env, message, 0);
-      if (msg_limit_internal_message())
+      //if (msg_limit_internal_message())
+      if (1)
         {
           msg_event_send(msg_event_create(pri, c_str, NULL));
         }
