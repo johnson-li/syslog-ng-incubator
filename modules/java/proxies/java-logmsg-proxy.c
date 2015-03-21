@@ -102,6 +102,7 @@ Java_org_syslog_1ng_MyLogMessage_printAll(JNIEnv *env, jobject obj, jlong handle
   LogMessage *msg = (LogMessage *)handle;
   guint len = logmsg_registry->names->len;
   NVHandleDesc *stored;
+  const gchar *value;
   while (len--) {
     stored = &g_array_index(logmsg_registry->names, NVHandleDesc, len);
     //code related to stamp is forbidden
@@ -110,7 +111,7 @@ Java_org_syslog_1ng_MyLogMessage_printAll(JNIEnv *env, jobject obj, jlong handle
     if (!strcmp(stored->name, "R_STAMP")) continue;
     if (!strcmp(stored->name, "STAMP")) continue;
 
-    char *value = log_msg_get_value_by_name(msg, stored->name, NULL);
+    value = log_msg_get_value_by_name(msg, stored->name, NULL);
     printf("%s: %s\n", stored->name, strlen(value) > 0 ? value : "__NULL__");
   }
 }
