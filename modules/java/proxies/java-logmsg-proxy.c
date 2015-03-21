@@ -25,6 +25,8 @@
 #include "java_machine.h"
 #include "messages.h"
 #include "logmsg.h"
+#include <stdio.h>
+#include <string.h>
 
 
 #define LOG_MESSAGE "org.syslog_ng.LogMessage"
@@ -73,6 +75,44 @@ Java_org_syslog_1ng_LogMessage_getValue(JNIEnv *env, jobject obj, jlong handle, 
     {
       return NULL;
     }
+}
+
+JNIEXPORT void JNICALL
+Java_org_syslog_1ng_MyLogMessage_setValue(JNIEnv *env, jobject obj, jlong handle, jstring key, jstring value)
+{
+  LogMessage *msg = (LogMessage *)handle;
+  const char *key_str = (*env)->GetStringUTFChars(env, key, NULL);
+  const char *value_str = (*env)->GetStringUTFChars(env, value, NULL);
+  if (key_str == NULL || value_str == NULL) return;
+
+  //clear protect_cnt to get set priviliege
+  //guint8 protect_cnt = msg->protect_cnt;
+  //printf("**************************%d", protect_cnt);
+  //msg->protect_cnt = 0;
+  log_msg_set_value_by_name(msg, (gchar *)key_str, (gchar *)value_str, strlen(value_str));
+  //msg->protect_cnt = protect_cnt;
+
+  (*env)->ReleaseStringUTFChars(env, key, key_str);
+  (*env)->ReleaseStringUTFChars(env, value, value_str);
+}
+
+JNIEXPORT void JNICALL
+Java_org_syslog_1ng_MyLogMessage_printAll(JNIEnv *env, jobject obj, jlong handle)
+{
+  LogMessage *msg = (LogMessage *)handle;
+  guint len = logmsg_registry->names->len;
+  NVHandleDesc *stored;
+  while (len--) {
+    stored = &g_array_index(logmsg_registry->names, NVHandleDesc, len);
+    //code related to stamp is forbidden
+    if (!strcmp(stored->name, "C_STAMP")) continue;
+    if (!strcmp(stored->name, "S_STAMP")) continue;
+    if (!strcmp(stored->name, "R_STAMP")) continue;
+    if (!strcmp(stored->name, "STAMP")) continue;
+
+    char *value = log_msg_get_value_by_name(msg, stored->name, NULL);
+    printf("%s: %s\n", stored->name, strlen(value) > 0 ? value : "__NULL__");
+  }
 }
 
 static gboolean
