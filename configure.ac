@@ -13,7 +13,8 @@ AC_CONFIG_HEADERS([config.h])
 dnl ***************************************************************************
 dnl definitions
 
-moduledir='${exec_prefix}/lib/syslog-ng'
+#moduledir='${exec_prefix}/lib/syslog-ng'
+moduledir='/usr/local/lib/syslog-ng'
 
 enable_value()
 {

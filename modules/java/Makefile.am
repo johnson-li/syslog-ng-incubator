@@ -59,7 +59,9 @@ JAVA_CLASS_FILES = \
     $(JAVA_CLASS_PATH)/TextLogDestination.class \
     $(JAVA_CLASS_PATH)/StructuredLogDestination.class \
     $(JAVA_CLASS_PATH)/DummyTextDestination.class \
-    $(JAVA_CLASS_PATH)/DummyStructuredDestination.class
+    $(JAVA_CLASS_PATH)/DummyStructuredDestination.class \
+    $(JAVA_CLASS_PATH)/MyLogMessage.class \
+    $(JAVA_CLASS_PATH)/MyStructuredDestination.class
 
 JAVA_FILES = \
     $(JAVA_SRC_DIR)/InternalMessageSender.java \
@@ -71,11 +73,14 @@ JAVA_FILES = \
     $(JAVA_SRC_DIR)/TextLogDestination.java \
     $(JAVA_SRC_DIR)/StructuredLogDestination.java \
     $(JAVA_SRC_DIR)/DummyTextDestination.java \
-    $(JAVA_SRC_DIR)/DummyStructuredDestination.java
+    $(JAVA_SRC_DIR)/DummyStructuredDestination.java \
+    $(JAVA_SRC_DIR)/MyLogMessage.java \
+    $(JAVA_SRC_DIR)/MyStructuredDestination.java
 
 JAVA_HEADER_FILES = \
    modules/java/LogDestination.h \
    modules/java/LogMessage.h \
+   modules/java/MyLogMessage.h \
    modules/java/LogTemplate.h \
    modules/java/InternalMessageSender.h
 
