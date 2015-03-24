@@ -24,6 +24,13 @@
 #ifndef SNG_TRIGGER_SOURCE_H_INCLUDED
 #define SNG_TRIGGER_SOURCE_H_INCLUDED
 
+#include <jni.h>
+#include <iv.h>
+#include <iv_event.h>
+#include "driver.h"
+#include "mainloop.h"
+#include "mainloop-io-worker.h"
+#include "java_machine.h"
 #include "parser/parser-expr.h"
 #include "proxies/java-parser-proxy.h"
 
@@ -32,11 +39,19 @@ typedef struct
 	JavaParserProxy *proxy;
 	GString *class_path;
 	gchar *class_name;
-} JavaDestDriver;
+} JavaParserDriver;
 
-LogParser *date_parser_new(GlobalConfig *cfg);
+LogParser *java_parser_new(GlobalConfig *cfg);
 
-void date_parser_set_offset (LogParser *s, goffset offset);
-void date_parser_set_format (LogParser *s, gchar *format);
-void date_parser_set_timezone (LogParser *s, gchar *tz);
+void java_parser_set_offset (LogParser *s, goffset offset);
+void java_parser_set_format (LogParser *s, gchar *format);
+void java_parser_set_timezone (LogParser *s, gchar *tz);
+
+static gboolean java_parser_init (LogPipe *parser);
+static gboolean java_parser_process (LogParser *s, 
+		LogMessage **pmsg, const LogPathOptions *path_options,
+		const gchar *input, gsize input_len);
+static LogPipe *java_parser_clone (LogPipe *s);
+static void java_parser_free (LogPipe *s);
+LogParser *java_parser_new (GlobalConfig *cfg);
 #endif

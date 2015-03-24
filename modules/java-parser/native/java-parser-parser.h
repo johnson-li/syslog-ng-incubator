@@ -24,12 +24,12 @@
 #ifndef SNG_TRIGGER_SOURCE_PARSER_H_INCLUDED
 #define SNG_TRIGGER_SOURCE_PARSER_H_INCLUDED
 
-#include "java-parser.h"
 #include "cfg-parser.h"
 #include "cfg-lexer.h"
+#include "java-parser.h"
 
-extern CfgParser date_parser;
+extern CfgParser java_parser;
 
-CFG_PARSER_DECLARE_LEXER_BINDING(date_, LogParser **)
+CFG_PARSER_DECLARE_LEXER_BINDING(java_, LogParser **)
 
 #endif

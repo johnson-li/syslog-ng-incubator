@@ -23,37 +23,39 @@
 
 #include "java-parser.h"
 #include "scratch-buffers.h"
+#include <stdio.h>
 
 #define KEY_BUFFER_LENGTH 1024
 
-typedef struct _DateParser
+typedef struct _JavaParser
 {
   LogParser super;
   goffset date_offset;
   gchar *date_format;
   gchar *date_tz;
   TimeZoneInfo *date_tz_info;
-} DateParser;
+} JavaParser;
 
 void
-date_parser_set_offset (LogParser *s, goffset offset)
+java_parser_set_offset (LogParser *s, goffset offset)
 {
-  DateParser *self = (DateParser *)s;
+  JavaParser *self = (JavaParser *)s;
   self->date_offset = offset;
 }
 
-void date_parser_set_format (LogParser *s, gchar *format)
+void java_parser_set_format (LogParser *s, gchar *format)
 {
-  DateParser *self = (DateParser *)s;
+	printf("format: %s\n", format);
+  JavaParser *self = (JavaParser *)s;
   if (self->date_format)
     g_free (self->date_format);
 
   self->date_format = g_strdup (format);
 }
 
-void date_parser_set_timezone (LogParser *s, gchar *tz)
+void java_parser_set_timezone (LogParser *s, gchar *tz)
 {
-  DateParser *self = (DateParser *)s;
+  JavaParser *self = (JavaParser *)s;
   if (self->date_tz)
     g_free (self->date_tz);
 
@@ -64,25 +66,27 @@ void date_parser_set_timezone (LogParser *s, gchar *tz)
 }
 
 static gboolean
-date_parser_init (LogPipe *parser)
+java_parser_init (LogPipe *parser)
 {
-  DateParser *self = (DateParser *)parser;
+	printf("java parser init\n");
+  JavaParser *self = (JavaParser *)parser;
   GlobalConfig *cfg = log_pipe_get_config (&self->super.super);
 
   return TRUE;
 };
 
 static gboolean
-date_parser_process (LogParser *s,
+java_parser_process (LogParser *s,
                      LogMessage **pmsg,
                      const LogPathOptions *path_options,
                      const gchar *input,
                      gsize input_len)
 {
+	printf("java parser process\n");
   const gchar *src = input;
   char *cloned_input;
   char *remaining;
-  DateParser *self = (DateParser *)s;
+  JavaParser *self = (JavaParser *)s;
   LogMessage *msg = log_msg_make_writable (pmsg, path_options);
   struct tm tm;
   memset(&tm, 0, sizeof(struct tm));
@@ -125,11 +129,12 @@ date_parser_process (LogParser *s,
 };
 
 static LogPipe *
-date_parser_clone (LogPipe *s)
+java_parser_clone (LogPipe *s)
 {
-  DateParser *self = (DateParser *) s;
+	printf("java parser clone\n");
+  JavaParser *self = (JavaParser *) s;
 
-  DateParser *cloned = (DateParser *) date_parser_new (log_pipe_get_config (&self->super.super));
+  JavaParser *cloned = (JavaParser *) java_parser_new (log_pipe_get_config (&self->super.super));
   g_free (cloned->date_format);
   g_free (self->date_tz);
   if (self->date_tz_info)
@@ -144,9 +149,10 @@ date_parser_clone (LogPipe *s)
 };
 
 static void
-date_parser_free (LogPipe *s)
+java_parser_free (LogPipe *s)
 {
-  DateParser *self = (DateParser *)s;
+	printf("java parser free\n");
+  JavaParser *self = (JavaParser *)s;
 
   g_free (self->date_format);
   g_free (self->date_tz);
@@ -156,16 +162,27 @@ date_parser_free (LogPipe *s)
   log_parser_free_method (s);
 };
 
-LogParser *date_parser_new (GlobalConfig *cfg)
+LogParser *java_parser_new (GlobalConfig *cfg)
 {
-  DateParser *self = g_new0 (DateParser, 1);
+	printf("java parser new\n");
+  JavaParser *self = g_new0 (JavaParser, 1);
   log_parser_init_instance (&self->super, cfg);
-  self->super.super.init = date_parser_init;
-  self->super.process = date_parser_process;
-  self->super.super.clone = date_parser_clone;
-  self->super.super.free_fn = date_parser_free;
+  self->super.super.init = java_parser_init;
+  self->super.process = java_parser_process;
+  self->super.super.clone = java_parser_clone;
+  self->super.super.free_fn = java_parser_free;
 
   self->date_format = g_strdup ("%FT%T%z");
 
-  return &self->super;
+  return &(self->super);
 };
+
+void java_parser_set_class_path (LogDriver *s, const gchar *class_path)
+{
+  printf("class_path: %s\n", class_path);
+}
+
+void java_parser_set_class_name (LogDriver *s, const gchar *class_name)
+{
+  printf("class_name: %s\n", class_name);
+}

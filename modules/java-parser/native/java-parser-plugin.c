@@ -21,11 +21,14 @@
  *
  */
 
-#include "java-parser.h"
-#include "java-parser-parser.h"
+#include <jni.h>
 
+#include "java-parser-parser.h"
 #include "plugin.h"
+#include "driver.h"
+#include "java-parser.h"
 #include "plugin-types.h"
+#include <stdio.h>
 
 extern CfgParser java_parser;
 
@@ -39,6 +42,7 @@ static Plugin java_plugin =
 gboolean
 java_parser_module_init(GlobalConfig *cfg, CfgArgs *args G_GNUC_UNUSED)
 {
+	printf("register java parser\n");
   plugin_register(cfg, &java_plugin, 1);
   return TRUE;
 }

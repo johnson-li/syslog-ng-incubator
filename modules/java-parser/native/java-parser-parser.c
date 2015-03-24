@@ -21,13 +21,11 @@
  *
  */
 
-#include "java-parser.h"
 #include "cfg-parser.h"
 #include "java-parser-grammar.h"
-#include "java-parser-parser.h"
 
 extern int java_parser_debug;
-int java_parser_parse(CfgLexer *lexer, LogParser **instance, gpointer arg);
+int java_parse(CfgLexer *lexer, LogParser **instance, gpointer arg);
 
 static CfgLexerKeyword java_parser_keywords[] = {
   { "java_parser", KW_DATE },
@@ -45,8 +43,8 @@ CfgParser java_parser =
 #endif
   .name = "java-parser",
   .keywords = java_parser_keywords,
-  .parse = (int (*)(CfgLexer *, gpointer *, gpointer)) java_parser_parse,
+  .parse = (int (*)(CfgLexer *, gpointer *, gpointer)) java_parse,
   .cleanup = (void (*)(gpointer)) log_pipe_unref,
 };
 
-CFG_PARSER_IMPLEMENT_LEXER_BINDING(date_, LogParser **);
+CFG_PARSER_IMPLEMENT_LEXER_BINDING(java_, LogParser **);
