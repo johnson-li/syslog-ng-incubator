@@ -34,12 +34,13 @@
 #include "parser/parser-expr.h"
 #include "proxies/java-parser-proxy.h"
 
-typedef struct 
+/*typedef struct 
 {
+	LogDriver super;
 	JavaParserProxy *proxy;
 	GString *class_path;
 	gchar *class_name;
-} JavaParserDriver;
+} JavaParserDriver;*/
 
 LogParser *java_parser_new(GlobalConfig *cfg);
 

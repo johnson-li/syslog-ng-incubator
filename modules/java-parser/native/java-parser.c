@@ -33,7 +33,10 @@ typedef struct _JavaParser
   goffset date_offset;
   gchar *date_format;
   gchar *date_tz;
+	gchar *class_path;
+	gchar *class_name;
   TimeZoneInfo *date_tz_info;
+	JavaParserProxy *proxy;
 } JavaParser;
 
 void
@@ -51,10 +54,12 @@ void java_parser_set_format (LogParser *s, gchar *format)
     g_free (self->date_format);
 
   self->date_format = g_strdup (format);
+	printf("done\n");
 }
 
 void java_parser_set_timezone (LogParser *s, gchar *tz)
 {
+	printf("timezone: %s\n", tz);
   JavaParser *self = (JavaParser *)s;
   if (self->date_tz)
     g_free (self->date_tz);
@@ -63,14 +68,42 @@ void java_parser_set_timezone (LogParser *s, gchar *tz)
   if (self->date_tz_info)
     time_zone_info_free (self->date_tz_info);
   self->date_tz_info = time_zone_info_new (self->date_tz);
+	printf("done\n");
+}
+
+void java_parser_set_class_path (LogParser *s, const gchar *class_path)
+{
+  printf("class_path: %s\n", class_path);
+  JavaParser *self = (JavaParser *)s;
+	if (self->class_path) 
+		g_free (self->class_path);
+	self->class_path = g_strdup(class_path);
+	printf("done\n");
+}
+
+void java_parser_set_class_name (LogParser *s, const gchar *class_name)
+{
+  printf("class_name: %s\n", class_name);
+  JavaParser *self = (JavaParser *)s;
+	g_free(self->class_name);
+	self->class_name = g_strdup(class_name);
+	printf("done\n");
 }
 
 static gboolean
 java_parser_init (LogPipe *parser)
 {
-	printf("java parser init\n");
   JavaParser *self = (JavaParser *)parser;
-  GlobalConfig *cfg = log_pipe_get_config (&self->super.super);
+	printf("java parser init: %s, %s\n", self->class_path, self->class_name);
+	GError *error = NULL;
+
+  self->proxy = java_parser_proxy_new(self->class_name, self->class_path, self);
+	if (!self->proxy) 
+		return FALSE;
+	if (!java_parser_proxy_init(self->proxy)) 
+		return FALSE;
+
+  //GlobalConfig *cfg = log_pipe_get_config (&self->super.super);
 
   return TRUE;
 };
@@ -82,7 +115,8 @@ java_parser_process (LogParser *s,
                      const gchar *input,
                      gsize input_len)
 {
-	printf("java parser process\n");
+	return java_parser_proxy_process (s, pmsg, path_options, input, input_len);
+	printf("java parser process by c\n");
   const gchar *src = input;
   char *cloned_input;
   char *remaining;
@@ -156,6 +190,8 @@ java_parser_free (LogPipe *s)
 
   g_free (self->date_format);
   g_free (self->date_tz);
+  g_free (self->class_path);
+  g_free (self->class_name);
   if (self->date_tz_info)
     time_zone_info_free (self->date_tz_info);
 
@@ -173,16 +209,9 @@ LogParser *java_parser_new (GlobalConfig *cfg)
   self->super.super.free_fn = java_parser_free;
 
   self->date_format = g_strdup ("%FT%T%z");
+  self->class_path = g_strdup ("/usr/local/lib/syslog-ng/SyslogNg.jar");
+  self->class_name = g_strdup ("org.syslog_ng.LogParser");
 
-  return &(self->super);
+  return (LogParser *)self;
 };
 
-void java_parser_set_class_path (LogDriver *s, const gchar *class_path)
-{
-  printf("class_path: %s\n", class_path);
-}
-
-void java_parser_set_class_name (LogDriver *s, const gchar *class_name)
-{
-  printf("class_name: %s\n", class_name);
-}

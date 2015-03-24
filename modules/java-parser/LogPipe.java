@@ -33,6 +33,7 @@ public abstract class LogPipe {
 	private long configHandle;
 
 	public LogPipe(long pipeHandle) {
+		System.out.println("LogPipe constructor");
 		this.pipeHandle = pipeHandle;
 		configHandle = 0;
 	}
@@ -59,6 +60,7 @@ public abstract class LogPipe {
 	}
 
 	public boolean initProxy() {
+		System.out.println("init proxy in java");
 		try {
 			return init();
 		}

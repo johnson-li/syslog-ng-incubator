@@ -46,16 +46,22 @@ JAVA_SRC_DIR = modules/java-parser
 
 JAVA_CLASS_FILES = \
 									 $(JAVA_CLASS_PATH)/InternalMessageSender.class \
+									 $(JAVA_CLASS_PATH)/SyslogNgClassLoader.class \
+									 $(JAVA_CLASS_PATH)/LogMessage.class \
 									 $(JAVA_CLASS_PATH)/LogPipe.class \
 									 $(JAVA_CLASS_PATH)/LogParser.class
 
 JAVA_FILES = \
 						 $(JAVA_SRC_DIR)/InternalMessageSender.java \
+						 $(JAVA_SRC_DIR)/SyslogNgClassLoader.java \
+						 $(JAVA_SRC_DIR)/LogMessage.java \
 						 $(JAVA_SRC_DIR)/LogPipe.java \
 						 $(JAVA_SRC_DIR)/LogParser.java
 
 JAVA_HEADER_FILES = \
 										modules/java-parser/LogParser.h \
+										modules/java-parser/LogMessage.h \
+										modules/java-parser/LogPipe.h \
 										modules/java-parser/InternalMessageSender.h
 
 modules/java-parser/SyslogNg.jar: $(JAVA_CLASS_FILES) $(JAVA_HEADER_FILES)
