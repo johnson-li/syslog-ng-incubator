@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2015 BalaBit IT Ltd, Budapest, Hungary
- * Copyright (c) 2015 Vincent Bernat <Vincent.Bernat@exoscale.ch>
+ * Copyright (c) 2014 BalaBit IT Ltd, Budapest, Hungary
+ * Copyright (c) 2014 Viktor Juhasz <viktor.juhasz@balabit.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -21,34 +21,25 @@
  *
  */
 
-#include "java-parser.h"
-#include "java-parser-parser.h"
+#ifndef JAVA_MACHINE_H
+#define JAVA_MACHINE_H 1
 
-#include "plugin.h"
-#include "plugin-types.h"
+#include <jni.h>
+#include <glib.h>
+#include "java-class-loader.h"
 
-extern CfgParser date_parser;
+#define CALL_JAVA_FUNCTION(env, function, ...) (*(env))->function(env, __VA_ARGS__)
 
-static Plugin date_plugin =
-{
-  .type = LL_CONTEXT_PARSER,
-  .name = "java-parser",
-  .parser = &date_parser,
-};
+typedef struct _JavaVMSingleton JavaVMSingleton;
 
-gboolean
-java_parser_module_init(GlobalConfig *cfg, CfgArgs *args G_GNUC_UNUSED)
-{
-  plugin_register(cfg, &date_plugin, 1);
-  return TRUE;
-}
+JavaVMSingleton *java_machine_ref();
+void java_machine_unref(JavaVMSingleton *self);
+gboolean java_machine_start(JavaVMSingleton* self);
 
-const ModuleInfo module_info =
-{
-  .canonical_name = "java-parser",
-  .version = VERSION,
-  .description = "Experimental java parser.",
-  .core_revision = VERSION_CURRENT_VER_ONLY,
-  .plugins = &date_plugin,
-  .plugins_len = 1,
-};
+void java_machine_detach_thread();
+
+JNIEnv *java_machine_get_env(JavaVMSingleton *self, JNIEnv **penv);
+
+jclass java_machine_load_class(JavaVMSingleton *self, const gchar *class_name, const gchar *class_path);
+
+#endif

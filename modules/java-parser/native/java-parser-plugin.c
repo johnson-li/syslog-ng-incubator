@@ -21,14 +21,34 @@
  *
  */
 
-#ifndef SNG_TRIGGER_SOURCE_H_INCLUDED
-#define SNG_TRIGGER_SOURCE_H_INCLUDED
+#include "java-parser.h"
+#include "java-parser-parser.h"
 
-#include "parser/parser-expr.h"
+#include "plugin.h"
+#include "plugin-types.h"
 
-LogParser *date_parser_new(GlobalConfig *cfg);
+extern CfgParser java_parser;
 
-void date_parser_set_offset (LogParser *s, goffset offset);
-void date_parser_set_format (LogParser *s, gchar *format);
-void date_parser_set_timezone (LogParser *s, gchar *tz);
-#endif
+static Plugin java_plugin =
+{
+  .type = LL_CONTEXT_PARSER,
+  .name = "java-parser",
+  .parser = &java_parser,
+};
+
+gboolean
+java_parser_module_init(GlobalConfig *cfg, CfgArgs *args G_GNUC_UNUSED)
+{
+  plugin_register(cfg, &java_plugin, 1);
+  return TRUE;
+}
+
+const ModuleInfo module_info =
+{
+  .canonical_name = "java-parser",
+  .version = VERSION,
+  .description = "Experimental java parser.",
+  .core_revision = VERSION_CURRENT_VER_ONLY,
+  .plugins = &java_plugin,
+  .plugins_len = 1,
+};

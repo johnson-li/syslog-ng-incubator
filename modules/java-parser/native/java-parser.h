@@ -21,30 +21,22 @@
  *
  */
 
-#include "java-parser.h"
-#include "cfg-parser.h"
-#include "java-parser-grammar.h"
-#include "java-parser-parser.h"
+#ifndef SNG_TRIGGER_SOURCE_H_INCLUDED
+#define SNG_TRIGGER_SOURCE_H_INCLUDED
 
-extern int date_parser_debug;
-int date_parse(CfgLexer *lexer, LogParser **instance, gpointer arg);
+#include "parser/parser-expr.h"
+#include "proxies/java-parser-proxy.h"
 
-static CfgLexerKeyword date_keywords[] = {
-  { "java_parser", KW_DATE },
-  { "offset",      KW_DATE_OFFSET },
-  { "format",      KW_DATE_FORMAT },
-  { NULL }
-};
-
-CfgParser date_parser =
+typedef struct 
 {
-#if ENABLE_DEBUG
-  .debug_flag = &date_parser_debug,
-#endif
-  .name = "java-parser",
-  .keywords = date_keywords,
-  .parse = (int (*)(CfgLexer *, gpointer *, gpointer)) date_parse,
-  .cleanup = (void (*)(gpointer)) log_pipe_unref,
-};
+	JavaParserProxy *proxy;
+	GString *class_path;
+	gchar *class_name;
+} JavaDestDriver;
 
-CFG_PARSER_IMPLEMENT_LEXER_BINDING(date_, LogParser **);
+LogParser *date_parser_new(GlobalConfig *cfg);
+
+void date_parser_set_offset (LogParser *s, goffset offset);
+void date_parser_set_format (LogParser *s, gchar *format);
+void date_parser_set_timezone (LogParser *s, gchar *tz);
+#endif
