@@ -2,6 +2,8 @@
 #include "java-logmsg-proxy.h"
 #include "java-class-loader.h"
 #include "java-logmsg-proxy.h"
+#include "messages.h"
+#include <string.h>
 
 typedef struct _JavaParserImpl
 {
@@ -56,6 +58,7 @@ __load_parser_object(JavaParserProxy *self, const gchar *class_name, const gchar
 				NULL);
 	}
 
+	self->parser_impl.parser_object = CALL_JAVA_FUNCTION(java_env, NewObject, self->loaded_class, self->parser_impl.mi_constructor, handle);
   return TRUE;
 }
 
@@ -116,12 +119,15 @@ java_parser_proxy_process(JavaParserProxy *self,
 		const gchar *input, gsize input_len) 
 {
 	JNIEnv *env = java_machine_get_env(self->java_machine, &env);
-	JavaLogMessageProxy *jmsg = java_log_message_proxy_new(*pmsg);
+	//JavaLogMessageProxy *jmsg = java_log_message_proxy_new(*pmsg);
+	GString *formatted_msg = g_string_new("hello");
+	//log_template_format(NULL, *pmsg, NULL, LTZ_LOCAL, 0, NULL, formatted_msg);
+	jstring message = CALL_JAVA_FUNCTION(env, NewStringUTF, formatted_msg->str);
   
 	jboolean res = CALL_JAVA_FUNCTION(env, CallBooleanMethod, 
 			self->parser_impl.parser_object, self->parser_impl.mi_process, 
-			java_log_parser_get_java_object(jmsg));
+			message);
 
-	java_log_message_proxy_free(jmsg);
+	CALL_JAVA_FUNCTION(env, DeleteLocalRef, message);
 	return !!(res);
 }

@@ -4,6 +4,7 @@
 #include <jni.h>
 #include <syslog-ng.h>
 #include <java_machine.h>
+#include <template/templates.h>
 
 typedef struct _JavaParserProxy JavaParserProxy;
 
